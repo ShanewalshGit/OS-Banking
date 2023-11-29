@@ -1,0 +1,2 @@
+Shane 111 shane@gmail.com password1 aaa 200.0
+Edgar 222 edgar@gmail.com password2 aaa 700.0
