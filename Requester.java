@@ -129,6 +129,10 @@ public class Requester{
 
 						message = (String)in.readObject();
 						System.out.println(message);
+						sendMessage(input.next()); // email for validation
+
+						message = (String)in.readObject();
+						System.out.println(message);
 						balance = input.nextDouble(); //balances
 						sendMessage(""+balance);
 

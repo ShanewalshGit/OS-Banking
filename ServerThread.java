@@ -212,10 +212,13 @@ public class ServerThread extends Thread {
         String ppsNumber = (String) readObject(); 
         sendMessage("Please enter ppsNumber for account you wish to transfer money to: ");
         String transferPps = (String) readObject();
+        sendMessage("Please enter email for account you wish to transfer money to: ");
+        String transferEmail = (String) readObject();
+
         sendMessage("Please enter amount you wish to transfer: ");
         double amount = Double.parseDouble((String) readObject());
 
-        sendMessage(b.transferMoney(ppsNumber, transferPps, amount));
+        sendMessage(b.transferMoney(ppsNumber, transferPps, transferEmail, amount));
         allTransactions.add("Transferred " + amount + " from account " + ppsNumber + " to account " + transferPps);
     }
 

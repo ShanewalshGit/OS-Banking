@@ -46,11 +46,11 @@ public class Bank {
 	}
 
 	//Transfer Money
-	public synchronized String transferMoney(String i, String j, double amount) {
+	public synchronized String transferMoney(String i, String j, String e, double amount) {
 		for (User u : users) {
 			if(u.ppsNumber().equals(i)) {
 				for (User b : users) {
-					if(b.ppsNumber().equals(j)) {
+					if(b.ppsNumber().equals(j) && b.email().equals(e)) {
 						if(u.balance >= amount) {
 							u.balance -= amount;
 							b.balance += amount;
