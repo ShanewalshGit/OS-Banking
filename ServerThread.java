@@ -14,13 +14,15 @@ public class ServerThread extends Thread {
 	ObjectInputStream in;
 	String message;
     boolean loggedIn = false;
+    Bank b;
 
     private static Map<String, User> users = new HashMap<>(); // Hashmap of users
     private static List<String> allTransactions = new ArrayList<>(); // List of transactions
 	
-	public ServerThread(Socket s)
+	public ServerThread(Socket s, Bank bank)
 	{
 		myConnection = s;
+        //this.b = b;
 	}
 	
 	public void run()
@@ -30,7 +32,7 @@ public class ServerThread extends Thread {
         String ppsNumber;
         double amount;
 		
-		Bank b = new Bank();
+		//Bank b = new Bank();
         User currentUser = null;
 
         //Read from file
