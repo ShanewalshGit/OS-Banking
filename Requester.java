@@ -8,6 +8,7 @@ public class Requester{
  	ObjectInputStream in;
  	String message;
  	String response;
+	boolean validate;
  	Scanner input;
 	Requester(){
 		
@@ -142,9 +143,25 @@ public class Requester{
                     }
                     else if(response.equalsIgnoreCase("6"))
                     {
-                        // View Transactions
-						message = (String)in.readObject(); //Listing Transactions...
+                        // Receive initial message from server
+						message = (String)in.readObject();
 						System.out.println(message);
+
+						// Receive boolean from server
+						String booleanString = (String)in.readObject();
+        				validate = Boolean.parseBoolean(booleanString);
+
+						while(validate) {
+							message = (String)in.readObject(); 
+							System.out.println(message); // Listing message
+
+							message = (String)in.readObject(); // Receive transaction
+							System.out.println(message); // Receive transaction
+
+							// Receive boolean from server for next loop
+							booleanString = (String)in.readObject();
+        					validate = Boolean.parseBoolean(booleanString);
+						}	
                     }
                     else if(response.equalsIgnoreCase("7"))
                     {
@@ -209,6 +226,19 @@ public class Requester{
 			ioException.printStackTrace();
 		}
 	}
+
+	void sendBoolean(Boolean bool)
+	{
+		try{
+			out.writeObject(bool);
+			out.flush();
+			System.out.println("validate> " + bool);
+		}
+		catch(IOException ioException){
+			ioException.printStackTrace();
+		}
+	}
+
 	public static void main(String args[])
 	{
 		Requester client = new Requester();

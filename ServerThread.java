@@ -14,15 +14,15 @@ public class ServerThread extends Thread {
 	ObjectInputStream in;
 	String message;
     boolean loggedIn = false;
-    Bank b;
+    Bank bank;
 
     private static Map<String, User> users = new HashMap<>(); // Hashmap of users
     private static List<String> allTransactions = new ArrayList<>(); // List of transactions
 	
-	public ServerThread(Socket s, Bank bank)
+	public ServerThread(Socket s, Bank b)
 	{
 		myConnection = s;
-        //this.b = b;
+        this.bank = b;
 	}
 	
 	public void run()
@@ -36,7 +36,7 @@ public class ServerThread extends Thread {
         User currentUser = null;
 
         //Read from file
-        readUsersFromFile(b);
+        readUsersFromFile(bank);
 		
 		try
 		{
@@ -58,10 +58,10 @@ public class ServerThread extends Thread {
 			
 				switch (message) {
                     case "1":
-                        registerUser(b); // Register
+                        registerUser(bank); // Register
                         break;
                     case "2":
-                        loginUser(b, currentUser); // Login
+                        loginUser(bank, currentUser); // Login
                         break;
                     case "3":
                         //lodgeMoney(b, currentUser); // Lodge money
@@ -72,20 +72,20 @@ public class ServerThread extends Thread {
                         sendMessage("Please enter amount you wish to lodge: ");
                         amount = Double.parseDouble((String)in.readObject());
 
-                        sendMessage(b.lodgeMoney(ppsNumber, amount));
+                        sendMessage(bank.lodgeMoney(ppsNumber, amount));
                         allTransactions.add("Lodged " + amount + " to account " + ppsNumber);
                         break;
                     case "4":
-                        listUsers(b); // List users
+                        listUsers(bank); // List users
                         break;
                     case "5":
-                        transferMoney(b); // Transfer money
+                        transferMoney(bank); // Transfer money
                         break;
                     case "6":
                         viewTransactions(currentUser); // View all transactions (for all users)
                         break;
                     case "7":
-                        updatePassword(b); // Update password
+                        updatePassword(bank); // Update password
                         break;
                     case "-1":
                         sendMessage("Closing connection."); // Close connection
@@ -225,10 +225,21 @@ public class ServerThread extends Thread {
     }
 
     private void viewTransactions(User currentUser) {
-        sendMessage("Listing transactions...");
-        for (String s : allTransactions) {
-            sendMessage(s);
+        System.out.println(allTransactions);
+        if (allTransactions.isEmpty()) {
+            sendMessage("No transactions to display.");
+            sendBoolean(false);
         }
+        
+        if(!allTransactions.isEmpty()) {
+            sendMessage("Listing transactions...");
+            for (String s : allTransactions) {
+                sendMessage(s);
+                sendBoolean(true);
+            }
+            sendBoolean(false);
+        }
+        
     }
 
     private void updatePassword(Bank b) {
@@ -254,6 +265,18 @@ public class ServerThread extends Thread {
 			out.writeObject("server> "+msg);
 			out.flush();
 			System.out.println("server>" + msg);
+		}
+		catch(IOException ioException){
+			ioException.printStackTrace();
+		}
+	}
+
+    void sendBoolean(Boolean bool)
+	{
+		try{
+			out.writeObject("Validate> "+bool);
+			out.flush();
+			System.out.println("Validate>" + bool);
 		}
 		catch(IOException ioException){
 			ioException.printStackTrace();
