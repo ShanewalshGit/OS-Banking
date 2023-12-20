@@ -17,7 +17,7 @@ public class ServerThread extends Thread {
     Bank bank;
 
     private static Map<String, User> users = new HashMap<>(); // Hashmap of users
-    private static List<String> allTransactions = new ArrayList<>(); // List of transactions
+    private static List<String> currentTransactions = new ArrayList<>(); // List of transactions
 	
 	public ServerThread(Socket s, Bank b)
 	{
@@ -73,7 +73,7 @@ public class ServerThread extends Thread {
                         amount = Double.parseDouble((String)in.readObject());
 
                         sendMessage(bank.lodgeMoney(ppsNumber, amount));
-                        allTransactions.add("Lodged " + amount + " to account " + ppsNumber);
+                        currentTransactions.add("Lodged " + amount + " to account " + ppsNumber);
                         break;
                     case "4":
                         listUsers(bank); // List users
@@ -99,6 +99,7 @@ public class ServerThread extends Thread {
 
             //Write to file
             writeUsersToFile();
+            writeTransactionsToFile();
 			
 			in.close();
 			out.close();
@@ -135,6 +136,36 @@ public class ServerThread extends Thread {
             FileWriter writer = new FileWriter("users.txt");
             for (User u : users.values()) {
                 writer.write(u.toString());
+            }
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private String readTransactionsFromFile() {
+        String transactions = "";
+        
+        try {
+            File file = new File("transactions.txt");
+            Scanner sc = new Scanner(file);
+
+            while (sc.hasNextLine()) {
+                transactions += sc.nextLine() + "\n";
+            }
+
+            sc.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        return transactions;
+    }
+
+    private void writeTransactionsToFile() {
+        try {
+            FileWriter writer = new FileWriter("transactions.txt", true);
+            for (String s : currentTransactions) {
+                writer.write(s + "\n");
             }
             writer.close();
         } catch (IOException e) {
@@ -196,7 +227,7 @@ public class ServerThread extends Thread {
                 return;
             }
             sendMessage(b.lodgeMoney(currentUser.ppsNumber, amount));
-            allTransactions.add("Lodged " + amount + " to account " + currentUser.ppsNumber);
+            currentTransactions.add("Lodged " + amount + " to account " + currentUser.ppsNumber);
         } catch (NumberFormatException e) {
             sendMessage("Invalid amount.");
         } catch (IOException | ClassNotFoundException e) {
@@ -221,24 +252,14 @@ public class ServerThread extends Thread {
         double amount = Double.parseDouble((String) readObject());
 
         sendMessage(b.transferMoney(ppsNumber, transferPps, transferEmail, amount));
-        allTransactions.add("Transferred " + amount + " from account " + ppsNumber + " to account " + transferPps);
+        currentTransactions.add("Transferred " + amount + " from account " + ppsNumber + " to account " + transferPps);
     }
 
     private void viewTransactions(User currentUser) {
-        System.out.println(allTransactions);
-        if (allTransactions.isEmpty()) {
-            sendMessage("No transactions to display.");
-            sendBoolean(false);
-        }
-        
-        if(!allTransactions.isEmpty()) {
-            sendMessage("Listing transactions...");
-            for (String s : allTransactions) {
-                sendMessage(s);
-                sendBoolean(true);
-            }
-            sendBoolean(false);
-        }
+        // View all transactions (for all users)
+        sendMessage("Viewing all transactions...");
+        sendMessage(readTransactionsFromFile());
+
         
     }
 

@@ -143,25 +143,12 @@ public class Requester{
                     }
                     else if(response.equalsIgnoreCase("6"))
                     {
-                        // Receive initial message from server
+						// View transactions
 						message = (String)in.readObject();
-						System.out.println(message);
+						System.out.println(message); // Listing Transactions
 
-						// Receive boolean from server
-						String booleanString = (String)in.readObject();
-        				validate = Boolean.parseBoolean(booleanString);
-
-						while(validate) {
-							message = (String)in.readObject(); 
-							System.out.println(message); // Listing message
-
-							message = (String)in.readObject(); // Receive transaction
-							System.out.println(message); // Receive transaction
-
-							// Receive boolean from server for next loop
-							booleanString = (String)in.readObject();
-        					validate = Boolean.parseBoolean(booleanString);
-						}	
+						message = (String)in.readObject();
+						System.out.println(message); // Receive Result
                     }
                     else if(response.equalsIgnoreCase("7"))
                     {
@@ -177,7 +164,6 @@ public class Requester{
                         message = (String)in.readObject();
                         System.out.println(message);
                     }
-                    
 					else if (!response.equalsIgnoreCase("-1"))
 					{
 						message = (String)in.readObject();
