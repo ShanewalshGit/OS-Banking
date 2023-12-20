@@ -8,6 +8,22 @@ import java.util.List;
 public class Bank {
     List<User> users = new ArrayList<>();
 	User u;
+
+	public synchronized boolean checkPPSNumber(String ppsNumber) {
+		for (User u : users) {
+			if(u.ppsNumber().equals(ppsNumber))
+				return false; // already exists
+		}
+		return true; // unique PPS
+	}
+
+	public synchronized boolean checkEmail(String email) {
+		for (User u : users) {
+			if(u.email().equals(email))
+				return false; // already exists
+		}
+		return true; // unique email
+	}
 	
 	//Add Users
 	public synchronized void addUser(String name, String ppsNumber, String email, String password, String address, double balance) {

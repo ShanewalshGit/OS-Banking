@@ -176,10 +176,33 @@ public class ServerThread extends Thread {
     private void registerUser(Bank b) {
         sendMessage("Please enter name: ");
         String name = (String) readObject();
-        sendMessage("Please enter ppsNumber: ");
-        String ppsNumber = (String) readObject();
-        sendMessage("Please enter email: ");
-        String email = (String) readObject();
+
+        //Check for unique pps and email
+        /*
+        String ppsNumber;
+        do {
+            sendMessage("Please enter ppsNumber: ");
+            ppsNumber = (String) readObject();
+            if (b.checkPPSNumber(ppsNumber)) {
+                break;
+            } else {
+                sendMessage("PPS number already in use. Please choose a different one.");
+            }
+        } while (true);
+
+        String email;
+        do {
+            sendMessage("Please enter email: ");
+            email = (String) readObject();
+            if (b.checkEmail(email)) {
+                break;
+            } else {
+                sendMessage("Email already in use. Please choose a different one.");
+            }
+        } while (true);
+
+        */
+
         sendMessage("Please enter password: ");
         String password = (String) readObject();
         sendMessage("Please enter address: ");
